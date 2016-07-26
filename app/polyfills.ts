@@ -1,4 +1,4 @@
 // Polyfills
 import 'reflect-metadata';
-import 'es6-shim';
+import 'core-js';
 import 'zone.js/dist/zone';

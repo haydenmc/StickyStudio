@@ -8,5 +8,8 @@
         "sourceMap": true
     },
     "compileOnSave": false,
-    "buildOnSave": false
+    "buildOnSave": false,
+    "awesomeTypescriptLoaderOptions": {
+        "emitRequireType": true
+    }
 }

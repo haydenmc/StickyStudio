@@ -19,7 +19,7 @@ module.exports = function makeWebpackConfig() {
 
     // Eval modules + sourcemaps for debugging
     if (!isProd) {
-        config.devtool = 'eval-source-map';
+        config.devtool = 'cheap-module-eval-source-map';
     }
 
     // Entry points
@@ -54,17 +54,23 @@ module.exports = function makeWebpackConfig() {
         loaders: [
             {
                 test: /\.ts$/,
-                loader: 'ts',
-                exclude: [/node_modules\/(?!(ng2-.+))/]
+                loaders: ['awesome-typescript-loader', 'angular2-template-loader']
+            },
+            {
+                test: /\.html$/,
+                loader: 'html'
             }
         ]
     };
 
     config.plugins = [
+        new webpack.optimize.CommonsChunkPlugin({
+            name: ['app', 'vendor', 'polyfills']
+        }),
         new htmlWebpackPlugin({
-            template: './app/index.html',
-            inject: 'body',
-            chunksSortMode: packageSort(['polyfills', 'vendor', 'app'])
+            template: './app/index.html'
+            //inject: 'body'
+            //chunksSortMode: packageSort(['polyfills', 'vendor', 'app'])
         })
     ]
 
@@ -73,26 +79,4 @@ module.exports = function makeWebpackConfig() {
 function root(args) {
     args = Array.prototype.slice.call(arguments, 0);
     return path.join.apply(path, [__dirname].concat(args));
-}
-function packageSort(packages) {
-    // packages = ['polyfills', 'vendor', 'app']
-    var len = packages.length - 1;
-    var first = packages[0];
-    var last = packages[len];
-    return function sort(a, b) {
-        // polyfills always first
-        if (a.names[0] === first) {
-            return -1;
-        }
-        // main always last
-        if (a.names[0] === last) {
-            return 1;
-        }
-        // vendor before app
-        if (a.names[0] !== first && b.names[0] === last) {
-            return -1;
-        } else {
-            return 1;
-        }
-    }
 }
